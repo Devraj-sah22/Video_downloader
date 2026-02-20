@@ -1,0 +1,21 @@
+{
+  "name": "video-downloader-backend",
+  "version": "1.0.0",
+  "description": "Backend service for video downloader extension",
+  "main": "backend.js",
+  "scripts": {
+    "start": "node backend.js",
+    "dev": "nodemon backend.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  }
+}
