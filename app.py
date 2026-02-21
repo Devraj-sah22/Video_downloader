@@ -38,13 +38,13 @@ PROGRESS_FILE = os.path.join(DOWNLOAD_DIR, '.progress.json')
 
 
 QUALITY_PRESETS = {
-    '2160p': 'bestvideo[ext=mp4][height<=2160]/best',
-    '1440p': 'bestvideo[ext=mp4][height<=1440]/best',
-    '1080p': 'bestvideo[ext=mp4][height<=1080]/best',
-    '720p':  'bestvideo[ext=mp4][height<=720]/best',
-    '480p':  'bestvideo[ext=mp4][height<=480]/best',
-    '360p':  'bestvideo[ext=mp4][height<=360]/best',
-    'best':  'bestvideo[ext=mp4]/best',
+    '2160p': 'bestvideo[height<=2160]+bestaudio/best[height<=2160]',
+    '1440p': 'bestvideo[height<=1440]+bestaudio/best[height<=1440]',
+    '1080p': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]',
+    '720p':  'bestvideo[height<=720]+bestaudio/best[height<=720]',
+    '480p':  'bestvideo[height<=480]+bestaudio/best[height<=480]',
+    '360p':  'bestvideo[height<=360]+bestaudio/best[height<=360]',
+    'best':  'bestvideo+bestaudio/best',
     'audio': 'bestaudio'
 }
 
@@ -139,7 +139,7 @@ def download_video():
                     '-f', format_selector,
                     '--merge-output-format', 'mp4',
                     '--remux-video', 'mp4',
-                    '--extractor-args', 'youtube:player_client=android',
+                    #'--extractor-args', 'youtube:player_client=android',
                     '--user-agent', 'Mozilla/5.0',
                     '--concurrent-fragments', '1',
                     '--force-ipv4',
