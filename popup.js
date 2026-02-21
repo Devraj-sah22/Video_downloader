@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check backend
     if (!(await isBackendAvailable())) {
-      showToast('❌ Backend not running!\nRun: node backend.js', 'error', 5000);
+      showToast('❌ Backend not running!\nRun: python app.py', 'error', 5000);
       return;
     }
 
@@ -132,16 +132,25 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const result = await response.json();
+      // 🔥 IMPORTANT FIX
+      const videoKey = result.videoKey;
+
+      if (!videoKey) {
+        throw new Error("Backend did not return videoKey");
+      }
       showToast(`✅ Download started: ${result.filename || 'video'}`);
       statusText.textContent = 'Download in progress...';
 
       // Optional: Poll for progress (only if backend supports /progress)
       // Commented out until you add /progress endpoint
-      /*
-      const encodedUrl = encodeURIComponent(videoUrl);
+      
+      //const encodedUrl = encodeURIComponent(videoUrl);
+      // ✅ ADD THIS LINE HERE
+      if (progressInterval) cleanupProgress();
       progressInterval = setInterval(async () => {
         try {
-          const res = await fetch(`${BACKEND_URL}/progress/${encodedUrl}`);
+          const res = await fetch(`${BACKEND_URL}/progress/${videoKey}`);
+          if (!res.ok) return;
           const data = await res.json();
           const progress = Math.round(data.progress || 0);
           progressFill.style.width = `${progress}%`;
@@ -151,29 +160,39 @@ document.addEventListener('DOMContentLoaded', () => {
             statusText.textContent = `✅ Complete: ${data.filename}`;
             showToast('Download completed!');
             cleanupProgress();
-          } else if (data.status === 'failed') {
-            statusText.textContent = `❌ Failed: ${data.error}`;
+            downloadBtn.disabled = false;
+            downloadBtn.innerHTML = '<i class="fas fa-cloud-download-alt"></i> DOWNLOAD NOW';
+          } 
+          else if (data.status === 'failed' || data.status === 'error') {
+            statusText.textContent = `❌ Failed`;
             showToast('Download failed', 'error');
             cleanupProgress();
+            downloadBtn.disabled = false;
+            downloadBtn.innerHTML = '<i class="fas fa-cloud-download-alt"></i> DOWNLOAD NOW';
+          } 
+          else {
+            statusText.textContent = `Downloading... ${progress}%`;
           }
         } catch (err) {
-          console.warn('Progress check failed');
+          console.warn('Progress fetch failed');
         }
       }, 1000);
-      */
+      
 
       // Simulate progress for demo (remove when real progress is added)
-      simulateProgress();
+      //simulateProgress();
+      
 
-    } catch (err) {
+    }catch (err) {
       console.error('Download failed:', err);
       statusText.textContent = `❌ ${err.message}`;
       showToast(`Failed: ${err.message}`, 'error');
-    } finally {
-      setTimeout(() => {
-        downloadBtn.disabled = false;
-        downloadBtn.innerHTML = '<i class="fas fa-cloud-download-alt"></i> DOWNLOAD NOW';
-      }, 2000);
+    //} finally {
+     // setTimeout(() => {
+       // downloadBtn.disabled = false;
+       // downloadBtn.innerHTML = '<i class="fas fa-cloud-download-alt"></i> DOWNLOAD NOW';
+      //}, 2000);
+      enableButton();
     }
   }
 
@@ -208,10 +227,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (progressInterval) clearInterval(progressInterval);
     progressInterval = null;
   }
+  function enableButton() {
+  downloadBtn.disabled = false;
+  downloadBtn.innerHTML = '<i class="fas fa-cloud-download-alt"></i> DOWNLOAD NOW';
+  }
 
   // Event Listeners
   downloadBtn.addEventListener('click', startDownload);
 
   // Init
   initUI();
+
+  // ✅ ADD THIS LINE AT THE VERY END
+  window.addEventListener('unload', cleanupProgress);
 });
