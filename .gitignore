@@ -1,6 +1,6 @@
-node_modules
-video_downloader.log
-video_downloader.log.1
-tmpblozjrje.tmp
-ffmpeg-8.0.1-essentials_build
-.venv
+#node_modules
+#video_downloader.log
+#video_downloader.log.1
+#tmpblozjrje.tmp
+#ffmpeg-8.0.1-essentials_build
+#.venv

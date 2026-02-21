@@ -125,7 +125,13 @@ def download_video():
                     '-x',
                     '--audio-format', 'mp3',
                     '--audio-quality', '0',
-                    '--output', os.path.join(DOWNLOAD_DIR, '%(title)s.%(ext)s'),
+                    # ❌ NEVER allow video
+                    '--no-video',
+
+                    # Optional but recommended
+                    '--no-playlist',
+
+                    '--output', os.path.join(DOWNLOAD_DIR, '%(title)s.mp3'),
                     video_url
                 ]
             else:
